@@ -1,3 +1,4 @@
+package src;
 
 public class ButtonNewGame extends Button {
 
@@ -6,6 +7,6 @@ public class ButtonNewGame extends Button {
     }
 
     protected void setAction() {
-        button.addActionListener(e -> new WindowGameSize());
+        this.addActionListener(e -> new WindowGameSize());
     }
 }

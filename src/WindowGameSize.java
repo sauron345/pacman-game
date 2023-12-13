@@ -1,3 +1,5 @@
+package src;
+
 import javax.swing.*;
 
 public class WindowGameSize {
@@ -6,7 +8,7 @@ public class WindowGameSize {
         Integer gridSize = promptForGridSize();
 
         if (gridSize != null && gridSize >= 10 && gridSize <= 100)
-            new WindowPacmanGame(gridSize, gridSize);
+            new WindowGame(gridSize, gridSize);
         else if (!(gridSize == null))
             JOptionPane.showMessageDialog(WindowStart.frame, "Nieprawidłowy rozmiar planszy. Wybierz wartość od 10 do 100.");
     }

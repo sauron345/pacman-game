@@ -1,3 +1,5 @@
+package src;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -34,7 +36,7 @@ public class WindowStart extends JPanel {
         int frameWidth = frame.getWidth();
         int x = (frameWidth - labelWidth) / 2;
         int y = 30;
-        title.setBounds(x, y, labelWidth, 30); // Ustaw rozmiar i położenie JLabel
+        title.setBounds(x, y, labelWidth, 30);
         frame.add(title);
     }
 
@@ -51,7 +53,7 @@ public class WindowStart extends JPanel {
     }
 
     private void addButtons() {
-        panel.add(Box.createVerticalGlue()); // Wyrównanie na środek
+        panel.add(Box.createVerticalGlue());
 
         panel.add(newGameButton.getJButton());
 

@@ -1,43 +1,19 @@
+package src;
 import javax.swing.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
-public class Pacman extends JLabel implements KeyListener {
-    private final WindowPacmanGame windowPacmanGame;
-    private int currImgPosRow, currImgPosCol;
-    private ImageIcon icon = new ImageIcon("images/pacman-right.png");
+abstract public class Image extends ImageIcon {
+    protected final WindowGame windowPacmanGame;
+    protected int currImgPosRow, currImgPosCol;
+    protected String imageStart;
+    protected ImageIcon icon;
 
-    public Pacman(WindowPacmanGame windowPacmanGame) {
+    public Image(WindowGame windowPacmanGame) {
         this.windowPacmanGame = windowPacmanGame;
         currImgPosRow = imgStartPosRow();
         currImgPosCol = imgStartPosCol();
     }
 
-    @Override
-    public void keyTyped(KeyEvent e) {
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        int keyCode = e.getKeyCode();
-
-        switch (keyCode) {
-            case KeyEvent.VK_LEFT -> {
-                leftImgOperations();
-            }
-            case KeyEvent.VK_RIGHT -> {
-                rightImgOperations();
-            }
-            case KeyEvent.VK_UP -> {
-                topImgOperations();
-            }
-            case KeyEvent.VK_DOWN -> {
-                bottomImgOperations();
-            }
-        }
-    }
-
-    private void leftImgOperations() {
+    protected void leftImgOperations() {
         icon = changeImgByDirection("left");
         if (currImgPosCol > 0 && !isWallCollLeftNext())
             moveImgLeft();
@@ -45,7 +21,7 @@ public class Pacman extends JLabel implements KeyListener {
             changeImgOnly();
     }
 
-    private void rightImgOperations() {
+    protected void rightImgOperations() {
         icon = changeImgByDirection("right");
         if (currImgPosCol < getTableRightBorder() && !isWallCollRightNext())
             moveImgRight();
@@ -53,7 +29,7 @@ public class Pacman extends JLabel implements KeyListener {
             changeImgOnly();
     }
 
-    private void topImgOperations() {
+    protected void topImgOperations() {
         icon = changeImgByDirection("up");
         if (currImgPosRow > 0 && !isWallRowTopNext())
             moveImgUp();
@@ -61,7 +37,7 @@ public class Pacman extends JLabel implements KeyListener {
             changeImgOnly();
     }
 
-    private void bottomImgOperations() {
+    protected void bottomImgOperations() {
         icon = changeImgByDirection("down");
         if (currImgPosRow < getTableBottomBorder() && !isWallRowBottomNext())
             moveImgDown();
@@ -69,20 +45,7 @@ public class Pacman extends JLabel implements KeyListener {
             changeImgOnly();
     }
 
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-    }
-
-    private ImageIcon changeImgByDirection(String direction) throws ErrorDirectionTypeException {
-        return switch (direction) {
-            case "right" -> new ImageIcon("images/pacman-right.png");
-            case "left" -> new ImageIcon("images/pacman-left.png");
-            case "down" -> new ImageIcon("images/pacman-down.png");
-            case "up" -> new ImageIcon("images/pacman-up.png");
-            default -> throw new ErrorDirectionTypeException();
-        };
-    }
+    abstract protected ImageIcon changeImgByDirection(String direction) throws ErrorDirectionTypeException;
 
     private void moveImgRight() throws ErrorDirectionTypeException {
         currImgPosCol++;
@@ -140,15 +103,11 @@ public class Pacman extends JLabel implements KeyListener {
         return windowPacmanGame.getWallsRowsIndexes().contains(currImgPosRow);
     }
 
-    private int imgStartPosRow() {
-        return windowPacmanGame.getTable().getRowCount() / 2;
-    }
+    abstract int imgStartPosRow();
 
-    private int imgStartPosCol() {
-        return windowPacmanGame.getTable().getColumnCount() / 2;
-    }
+    abstract int imgStartPosCol();
 
-    public ImageIcon getIcon() {
+    protected ImageIcon getIcon() {
         return icon;
     }
 
@@ -159,4 +118,5 @@ public class Pacman extends JLabel implements KeyListener {
     public int getCurrImgPosCol() {
         return currImgPosCol;
     }
+
 }

@@ -1,21 +1,24 @@
+package src;
+
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class WindowPacmanGame extends JFrame {
+public class WindowGame extends JFrame {
     private final int colCellsAmount, rowCellsAmount;
     private JTable table;
     private CustomTable customTable;
-    private Pacman pacman;
+    private ImagePacman pacman;
+    private ImageGhost ghost;
     private ArrayList<Integer> wallsColsIndexes = new ArrayList<>();
     private ArrayList<Integer> wallsRowsIndexes = new ArrayList<>();
 
     public static void main(String[] args) {
-        new WindowPacmanGame(15, 15);
+        new WindowGame(15, 15);
     }
 
-    public WindowPacmanGame(int colCellsAmount, int rowCellsAmount) {
+    public WindowGame(int colCellsAmount, int rowCellsAmount) {
         this.colCellsAmount = colCellsAmount;
         this.rowCellsAmount = rowCellsAmount;
         createTable();
@@ -39,7 +42,12 @@ public class WindowPacmanGame extends JFrame {
     }
 
     private void pacmanConfig() {
-        pacman = new Pacman(this);
+        pacman = new ImagePacman(this);
+        addKeyListener(pacman);
+    }
+
+    private void ghostsConfig() {
+        ghost = new ImageGhost(this, "red");
         addKeyListener(pacman);
     }
 
@@ -78,6 +86,9 @@ public class WindowPacmanGame extends JFrame {
                 wallsColsIndexes.add(column);
                 wallsRowsIndexes.add(row);
                 ((JLabel) cell).setIcon(null);
+            } else if (row == 2 && column == 6) {
+                ((JLabel) cell).setIcon(new ImageIcon("images/ghosts/purple/left.png"));
+                cell.setBackground(Color.BLACK);
             } else if (row == pacman.getCurrImgPosRow() && column == pacman.getCurrImgPosCol()) {
                 ((JLabel) cell).setIcon(pacman.getIcon());
                 cell.setBackground(Color.BLACK);
@@ -92,25 +103,6 @@ public class WindowPacmanGame extends JFrame {
 
         }
     }
-
-/*
-    public class DisplayPacman extends DefaultTableCellRenderer {
-
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                                                       boolean hasFocus, int row, int column) {
-            Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            if (row == pacmanCharacter.getCurrImgPosRow() && column == pacmanCharacter.getCurrImgPosCol())
-                ((JLabel) cell).setIcon(pacmanCharacter.getIcon());
-            else
-                ((JLabel) cell).setIcon(null);
-
-            ((JLabel) cell).setText("");
-            cell.setBackground(Color.BLACK);
-
-            return cell;
-        }
-    }
-*/
 
     class CustomTable extends AbstractTableModel {
 
@@ -135,7 +127,7 @@ public class WindowPacmanGame extends JFrame {
     }
 
     public void displayImgInDifferentPos() {
-        table.getColumnModel().getColumn(pacman.getCurrImgPosCol()).setCellRenderer(new WindowPacmanGame.DisplayComponents());
+        table.getColumnModel().getColumn(pacman.getCurrImgPosCol()).setCellRenderer(new WindowGame.DisplayComponents());
         table.repaint();
     }
 

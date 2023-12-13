@@ -1,3 +1,5 @@
+package src;
+
 public class ButtonHighScores extends Button {
 
     public ButtonHighScores(String name) {
@@ -5,6 +7,6 @@ public class ButtonHighScores extends Button {
     }
 
     protected void setAction() {
-        button.addActionListener(e -> System.exit(0));
+        this.addActionListener(e -> System.exit(0));
     }
 }
