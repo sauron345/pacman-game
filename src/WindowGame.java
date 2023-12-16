@@ -14,6 +14,7 @@ public class WindowGame extends JFrame {
     private ImagePacman pacman;
     private ImageGhost ghost;
     private Point point;
+    TimeUpdater timeUpdater = new TimeUpdater(1000);
     private DisplayComponents displayComp;
     private ArrayList<Integer> heartsCols = new ArrayList();
     private final int[][] wallsIndexes = {
@@ -94,6 +95,7 @@ public class WindowGame extends JFrame {
     }
 
     private void tableConfig() {
+        timeUpdater.start();
         table.setDefaultRenderer(ImageIcon.class, new DisplayComponents());
         table.setShowGrid(false);
         table.setIntercellSpacing(new Dimension(0, 0));
@@ -152,10 +154,12 @@ public class WindowGame extends JFrame {
     }
 
     private void editCell(JLabel lbl, int tabRow, int tabCol) {
-        lbl.setText("");
+        removeUselessDigits(lbl);
         displayHearts(lbl, tabRow, tabCol);
 
-        if (isCellForPointsLbl(tabRow, tabCol))
+        if (isCellForPlayTime(tabRow, tabCol))
+            displayPlayTime(lbl);
+        else if (isCellForPointsLbl(tabRow, tabCol))
             displayPoints(lbl);
         else if (isWallExistsIn(tabRow, tabCol))
             addWall(lbl);
@@ -169,6 +173,10 @@ public class WindowGame extends JFrame {
             fillWithPoint(lbl);
         else
             fillWithBlackColor(lbl);
+    }
+
+    private void removeUselessDigits(JLabel lbl) {
+        lbl.setText("");
     }
 
     private void collectPoint(JLabel lbl, int row, int col) {
@@ -219,9 +227,21 @@ public class WindowGame extends JFrame {
         lbl.setBackground(Color.BLACK);
     }
 
+    private void displayPlayTime(JLabel lbl) {
+        lbl.setText(String.valueOf(timeUpdater.getPlayTime()));
+        lbl.setForeground(Color.MAGENTA);
+        lbl.setHorizontalAlignment(JLabel.CENTER);
+        lbl.setBackground(Color.BLACK);
+        lbl.setFont(new Font("", Font.BOLD, 20));
+    }
+
+    private boolean isCellForPlayTime(int row, int column) {
+        return row == 0 && column == 0;
+    }
+
     private void displayHearts(JLabel lbl, int row, int column) {
         if (isCellForHeart(row, column))
-            lbl.setIcon(pacman.imgHeart);
+            lbl.setIcon(pacman.getImgHeart());
         else
             lbl.setIcon(null);
     }
@@ -309,14 +329,6 @@ public class WindowGame extends JFrame {
 
     private void setBorderConfig() {
         getRootPane().setBorder(BorderFactory.createMatteBorder(3, 3, 3, 3, Color.BLUE));
-    }
-
-    private void displayPacman() {
-        table.getColumnModel().getColumn(pacman.getCurrPosCol()).setCellRenderer(displayComp);
-    }
-
-    private void displayGhost() {
-        table.getColumnModel().getColumn(ghost.getCurrPosCol()).setCellRenderer(displayComp);
     }
 
     public JTable getTable() {
