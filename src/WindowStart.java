@@ -18,7 +18,6 @@ public class WindowStart extends JPanel {
     public WindowStart() {
         frameConfig();
         titleConfig();
-
         centerPanelConfig();
     }
 
@@ -57,7 +56,7 @@ public class WindowStart extends JPanel {
 
         panel.add(newGameButton.getJButton());
 
-        panel.add(Box.createRigidArea(new Dimension(0, 10))); // Odstęp pomiędzy przyciskami
+        panel.add(Box.createRigidArea(new Dimension(0, 10)));
 
         panel.add(highScoresButton.getJButton());
 

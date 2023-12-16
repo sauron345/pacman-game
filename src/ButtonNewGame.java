@@ -7,6 +7,8 @@ public class ButtonNewGame extends Button {
     }
 
     protected void setAction() {
-        this.addActionListener(e -> new WindowGameSize());
+        this.addActionListener(e -> {
+            new WindowGameSize();
+        });
     }
 }

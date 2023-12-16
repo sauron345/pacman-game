@@ -1,122 +1,146 @@
 package src;
 import javax.swing.*;
+import java.awt.*;
 
-abstract public class Image extends ImageIcon {
-    protected final WindowGame windowPacmanGame;
+abstract public class Image extends JLabel {
+    protected final WindowGame windowGame;
     protected int currImgPosRow, currImgPosCol;
-    protected String imageStart;
-    protected ImageIcon icon;
+    protected String imgStart;
+    protected ImageIcon currImgDirection;
+    protected ImageIcon currImgAnimation;
+    protected int currImgNum = 0;
+    protected String currDirection;
+    protected ImageIcon leftImg, rightImg, upImg, downImg;
+    protected ImageIcon leftAnim, rightAnim, upAnim, downAnim;
+
 
     public Image(WindowGame windowPacmanGame) {
-        this.windowPacmanGame = windowPacmanGame;
+        this.windowGame = windowPacmanGame;
+        imgStartPos();
+    }
+
+    public void imgStartPos() {
         currImgPosRow = imgStartPosRow();
         currImgPosCol = imgStartPosCol();
     }
 
-    protected void leftImgOperations() {
-        icon = changeImgByDirection("left");
-        if (currImgPosCol > 0 && !isWallCollLeftNext())
-            moveImgLeft();
-        else
-            changeImgOnly();
+    public Image(WindowGame windowPacmanGame, int currImgPosRow, int currImgPosCol) {
+        this.windowGame = windowPacmanGame;
+        this.currImgPosRow = currImgPosRow;
+        this.currImgPosCol = currImgPosCol;
     }
 
-    protected void rightImgOperations() {
-        icon = changeImgByDirection("right");
-        if (currImgPosCol < getTableRightBorder() && !isWallCollRightNext())
-            moveImgRight();
-        else
-            changeImgOnly();
+    protected void changeImgForAnimation(JLabel lbl) {
+        if (getCurrImgNum() == 0) {
+            lbl.setIcon(getCurrImgDirection());
+            currImgNum = 1;
+        } else {
+            lbl.setIcon(getImgAnimation());
+            currImgNum = 0;
+        }
     }
 
-    protected void topImgOperations() {
-        icon = changeImgByDirection("up");
-        if (currImgPosRow > 0 && !isWallRowTopNext())
-            moveImgUp();
-        else
-            changeImgOnly();
+    protected ImageIcon changeImgByDirection(String direction) throws ErrorDirectionTypeException {
+        return switch (direction) {
+            case "right" -> rightImg;
+            case "left" -> leftImg;
+            case "down" -> downImg;
+            case "up" -> upImg;
+            default -> throw new ErrorDirectionTypeException();
+        };
     }
 
-    protected void bottomImgOperations() {
-        icon = changeImgByDirection("down");
-        if (currImgPosRow < getTableBottomBorder() && !isWallRowBottomNext())
-            moveImgDown();
-        else
-            changeImgOnly();
+    protected ImageIcon changeImgAnimationByDir(String direction) throws ErrorDirectionTypeException {
+        return switch (direction) {
+            case "right" -> rightAnim;
+            case "left" -> leftAnim;
+            case "down" -> downAnim;
+            case "up" -> upAnim;
+            default -> throw new ErrorDirectionTypeException();
+        };
     }
 
-    abstract protected ImageIcon changeImgByDirection(String direction) throws ErrorDirectionTypeException;
+    abstract protected void changePos(JLabel lbl);
 
-    private void moveImgRight() throws ErrorDirectionTypeException {
+    abstract protected void leftImgOperations();
+
+    abstract protected void rightImgOperations();
+
+    abstract protected void topImgOperations();
+
+    abstract protected void bottomImgOperations();
+
+    abstract protected void imgsDirections();
+
+    abstract protected void imgsAnimations();
+
+    void moveImgRight() throws ErrorDirectionTypeException {
         currImgPosCol++;
-        windowPacmanGame.displayImgInDifferentPos();
+        windowGame.displayImgInDifferentPos(this);
     }
 
-    private void moveImgLeft() throws ErrorDirectionTypeException {
+    protected void moveImgLeft() throws ErrorDirectionTypeException {
         currImgPosCol--;
-        windowPacmanGame.displayImgInDifferentPos();
+        windowGame.displayImgInDifferentPos(this);
     }
 
-    private void moveImgUp() throws ErrorDirectionTypeException {
+    protected void moveImgUp() throws ErrorDirectionTypeException {
         currImgPosRow--;
-        windowPacmanGame.displayImgInDifferentPos();
+        windowGame.displayImgInDifferentPos(this);
     }
 
-    private void moveImgDown() throws ErrorDirectionTypeException {
+    protected void moveImgDown() throws ErrorDirectionTypeException {
         currImgPosRow++;
-        windowPacmanGame.displayImgInDifferentPos();
+        windowGame.displayImgInDifferentPos(this);
     }
 
-    private int getTableRightBorder() {
-        return windowPacmanGame.getTable().getColumnCount()-1;
+    protected int getTableRightBorder() {
+        return windowGame.getTable().getColumnCount()-1;
     }
 
-    private int getTableBottomBorder() {
-        return windowPacmanGame.getTable().getRowCount()-1;
+    protected int getTableBottomBorder() {
+        return windowGame.getTable().getRowCount()-1;
     }
 
-    private void changeImgOnly() throws ErrorDirectionTypeException {
-        windowPacmanGame.displayImgInDifferentPos();
+    protected boolean isWallRowBottomNext() {
+        return windowGame.isWallExistsIn(currImgPosRow + 1, currImgPosCol);
     }
 
-    private boolean isWallRowBottomNext() {
-        return windowPacmanGame.getWallsRowsIndexes().contains(currImgPosRow+1) && isWallColSame();
+    protected boolean isWallRowTopNext() {
+        return windowGame.isWallExistsIn(currImgPosRow - 1, currImgPosCol);
     }
 
-    private boolean isWallRowTopNext() {
-        return windowPacmanGame.getWallsRowsIndexes().contains(currImgPosRow-1) && isWallColSame();
+    protected boolean isWallCollLeftNext() {
+        return windowGame.isWallExistsIn(currImgPosRow, currImgPosCol - 1);
     }
 
-    private boolean isWallCollLeftNext() {
-        return windowPacmanGame.getWallsColsIndexes().contains(currImgPosCol-1) && isWallRowSame();
-    }
-
-    private boolean isWallCollRightNext() {
-        return windowPacmanGame.getWallsColsIndexes().contains(currImgPosCol+1) && isWallRowSame();
-    }
-
-    private boolean isWallColSame() {
-        return windowPacmanGame.getWallsColsIndexes().contains(currImgPosCol);
-    }
-
-    private boolean isWallRowSame() {
-        return windowPacmanGame.getWallsRowsIndexes().contains(currImgPosRow);
+    protected boolean isWallCollRightNext() {
+        return windowGame.isWallExistsIn(currImgPosRow, currImgPosCol + 1);
     }
 
     abstract int imgStartPosRow();
 
     abstract int imgStartPosCol();
 
-    protected ImageIcon getIcon() {
-        return icon;
+    protected ImageIcon getCurrImgDirection() {
+        return currImgDirection;
     }
 
-    public int getCurrImgPosRow() {
+    public int getCurrPosRow() {
         return currImgPosRow;
     }
 
-    public int getCurrImgPosCol() {
+    public int getCurrPosCol() {
         return currImgPosCol;
     }
+
+    public ImageIcon getImgAnimation() {
+        return currImgAnimation;
+    }
+
+    public int getCurrImgNum() {
+        return currImgNum;
+    }
+
 
 }
