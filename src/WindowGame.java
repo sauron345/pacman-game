@@ -5,6 +5,7 @@ import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 
@@ -16,7 +17,7 @@ public class WindowGame extends JFrame {
     private Point point;
     TimeUpdater timeUpdater = new TimeUpdater(1000);
     private DisplayComponents displayComp;
-    private ArrayList<Integer> heartsCols = new ArrayList();
+    private ArrayList<Integer> heartsImgs = new ArrayList();
     private final int[][] wallsIndexes = {
             {0, 1, 3, 4, 5, 6, 8, 9},
             {0, 9},
@@ -47,9 +48,9 @@ public class WindowGame extends JFrame {
     }
 
     private void assignHeartsCols() {
-        heartsCols.add(4);
-        heartsCols.add(5);
-        heartsCols.add(6);
+        heartsImgs.add(4);
+        heartsImgs.add(5);
+        heartsImgs.add(6);
     }
 
     private void imgsStartPos() {
@@ -145,9 +146,9 @@ public class WindowGame extends JFrame {
     private void checkCollisionOccurred() {
         if (isColumnsSame(pacman, ghost) && isRowsSame(pacman, ghost)) {
             imgsStartPos();
-            if (pacman.getAvailableHearts() > 0) {
+            if (pacman.getAvailableHearts() > 0)
                 reduceHealth();
-            } else
+            else
                 endGame();
         }
     }
@@ -158,7 +159,7 @@ public class WindowGame extends JFrame {
     }
 
     private void reduceHealth() {
-        if (!heartsCols.isEmpty()) {
+        if (!heartsImgs.isEmpty()) {
             pacman.reduceHealth();
             removeLastHeart();
         }
@@ -174,9 +175,9 @@ public class WindowGame extends JFrame {
             displayPoints(lbl);
         else if (isWallExistsIn(tabRow, tabCol))
             addWall(lbl);
-        else if (isCellFor(ghost, tabRow, tabCol))
+        else if (isCellFor(ghost, tabRow, tabCol)) {
             ghost.changePos(lbl);
-        else if (isCellFor(point, tabRow, tabCol) && isCellFor(pacman, tabRow, tabCol))
+        } else if (isCellFor(point, tabRow, tabCol) && isCellFor(pacman, tabRow, tabCol))
             collectPoint(lbl, tabRow, tabCol);
         else if (isCellFor(pacman, tabRow, tabCol))
             pacman.changePos(lbl);
@@ -275,7 +276,7 @@ public class WindowGame extends JFrame {
     }
 
     private boolean isCellForHeart(int row, int column) {
-        return row == 0 && heartsCols.contains(column);
+        return row == 0 && heartsImgs.contains(column);
     }
 
     private boolean isCellForPointsLbl(int row, int column) {
@@ -343,7 +344,7 @@ public class WindowGame extends JFrame {
     }
 
     private void removeLastHeart() {
-        heartsCols.removeLast();
+        heartsImgs.removeLast();
     }
 
     private void fillColorCell(int i) {
@@ -358,4 +359,11 @@ public class WindowGame extends JFrame {
         return table;
     }
 
+    public Point getPoint() {
+        return point;
+    }
+
+    public TimeUpdater getTimeUpdater() {
+        return timeUpdater;
+    }
 }

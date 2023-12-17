@@ -6,6 +6,7 @@ import static java.lang.Thread.sleep;
 public class ImageGhost extends Image implements Runnable {
     private final String type;
     private final String[] availDirect = {"left", "right", "down", "up"};
+    private boolean running = false;
 
     public ImageGhost(WindowGame windowGame, String type, int startPosRow, int startPosCol) {
         super(windowGame, startPosRow, startPosCol);
@@ -39,9 +40,8 @@ public class ImageGhost extends Image implements Runnable {
 
     @Override
     public void run() {
-
         try {
-            sleep(6000);
+            sleep(600);
             imgOperations();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);

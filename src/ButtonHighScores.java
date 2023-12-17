@@ -7,6 +7,9 @@ public class ButtonHighScores extends Button {
     }
 
     protected void setAction() {
-        this.addActionListener(e -> System.exit(0));
+        this.addActionListener(e -> {
+            WindowPlayersStats windowPlayersStats = new WindowPlayersStats();
+            windowPlayersStats.display();
+        });
     }
 }
