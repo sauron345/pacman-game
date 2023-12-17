@@ -39,8 +39,9 @@ public class ImageGhost extends Image implements Runnable {
 
     @Override
     public void run() {
+
         try {
-            sleep(600);
+            sleep(6000);
             imgOperations();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);

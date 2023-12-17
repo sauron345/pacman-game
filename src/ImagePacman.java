@@ -117,6 +117,10 @@ public class ImagePacman extends Image implements KeyListener {
         return imgHeart;
     }
 
+    public int getAvailableHearts() {
+        return availableHearts;
+    }
+
     @Override
     int imgStartPosRow() {
         return 2;

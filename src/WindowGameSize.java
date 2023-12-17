@@ -3,19 +3,31 @@ import static src.WindowStart.frame;
 import javax.swing.*;
 
 public class WindowGameSize {
+    private Integer enteredSize;
+    private String sizeType;
 
-    public WindowGameSize() {
-        Integer gridSize = promptForGridSize();
+    public WindowGameSize(String sizeType) {
+        this.sizeType = sizeType;
+        enteredSize = promptForGridSize();
 
-        if (gridSize != null && gridSize >= 10 && gridSize <= 100) {
-            frame.dispose();
-            new WindowGame(gridSize, gridSize);
-        } else if (!(gridSize == null))
-            JOptionPane.showMessageDialog(WindowStart.frame, "Nieprawidłowy rozmiar planszy. Wybierz wartość od 10 do 100.");
+        if (isEnteredSizeCorr()) {
+            if (sizeType.equals("width")) {
+                WindowGameSize gameSize = new WindowGameSize("height");
+                if (gameSize.isEnteredSizeCorr()) {
+                    new WindowGame(enteredSize, gameSize.getEnteredSize());
+                    frame.dispose();
+                }
+            }
+        } else if (!(enteredSize == null))
+            JOptionPane.showMessageDialog(WindowStart.frame, "Invalid " + this.sizeType + " of window. Choose between 10 and 100");
     }
 
-    static Integer promptForGridSize() {
-        String windowSize = JOptionPane.showInputDialog("Enter size of window (from 10 to 100):");
+    public boolean isEnteredSizeCorr() {
+        return enteredSize != null && enteredSize >= 10 && enteredSize <= 100;
+    }
+
+    private Integer promptForGridSize() {
+        String windowSize = JOptionPane.showInputDialog("Enter " + sizeType + " of window (from 10 to 100):");
         try {
             if (windowSize != null)
                 return Integer.parseInt(windowSize);
@@ -25,4 +37,7 @@ public class WindowGameSize {
         }
     }
 
+    public Integer getEnteredSize() {
+        return enteredSize;
+    }
 }

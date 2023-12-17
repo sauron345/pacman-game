@@ -86,6 +86,7 @@ public class WindowGame extends JFrame {
         editTableCells();
         imgsStartPos();
         pointsConfig();
+        timeConfig();
         closeWindowByKeysCombination();
     }
 
@@ -94,8 +95,11 @@ public class WindowGame extends JFrame {
         generatePoints();
     }
 
-    private void tableConfig() {
+    private void timeConfig() {
         timeUpdater.start();
+    }
+
+    private void tableConfig() {
         table.setDefaultRenderer(ImageIcon.class, new DisplayComponents());
         table.setShowGrid(false);
         table.setIntercellSpacing(new Dimension(0, 0));
@@ -109,7 +113,6 @@ public class WindowGame extends JFrame {
         InputMap inputMap = this.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         ActionMap actionMap = this.getRootPane().getActionMap();
         inputMap.put(closeKeyStroke, "closeWindow");
-
         actionMap.put("closeWindow", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -142,8 +145,16 @@ public class WindowGame extends JFrame {
     private void checkCollisionOccurred() {
         if (isColumnsSame(pacman, ghost) && isRowsSame(pacman, ghost)) {
             imgsStartPos();
-            reduceHealth();
+            if (pacman.getAvailableHearts() > 0) {
+                reduceHealth();
+            } else
+                endGame();
         }
+    }
+
+    private void endGame() {
+        timeUpdater.stopTimer();
+        new SaveStats(this);
     }
 
     private void reduceHealth() {
@@ -154,7 +165,7 @@ public class WindowGame extends JFrame {
     }
 
     private void editCell(JLabel lbl, int tabRow, int tabCol) {
-        removeUselessDigits(lbl);
+        lbl.setText("");
         displayHearts(lbl, tabRow, tabCol);
 
         if (isCellForPlayTime(tabRow, tabCol))
@@ -175,14 +186,16 @@ public class WindowGame extends JFrame {
             fillWithBlackColor(lbl);
     }
 
-    private void removeUselessDigits(JLabel lbl) {
-        lbl.setText("");
-    }
-
     private void collectPoint(JLabel lbl, int row, int col) {
         point.addCollectedPoint();
-        removeAddedPoint(lbl, row, col);
         pacman.changePos(lbl);
+        removeAddedPoint(lbl, row, col);
+        checkExistingPoints();
+    }
+
+    private void checkExistingPoints() {
+        if (point.getCollectedPoints() >= point.getAllPoints())
+            endGame();
     }
 
     private void generatePoints() {
@@ -232,7 +245,14 @@ public class WindowGame extends JFrame {
         lbl.setForeground(Color.MAGENTA);
         lbl.setHorizontalAlignment(JLabel.CENTER);
         lbl.setBackground(Color.BLACK);
-        lbl.setFont(new Font("", Font.BOLD, 20));
+        setPlayTimeFont(lbl);
+    }
+
+    private void setPlayTimeFont(JLabel lbl) {
+        if (timeUpdater.getPlayTime() > 99)
+            lbl.setFont(new Font("", Font.ITALIC, 10));
+        else
+            lbl.setFont(new Font("", Font.BOLD, 20));
     }
 
     private boolean isCellForPlayTime(int row, int column) {
@@ -299,8 +319,11 @@ public class WindowGame extends JFrame {
     }
 
     public void displayImgInDifferentPos(Image img) {
-        table.getColumnModel().getColumn(img.getCurrPosCol()).setCellRenderer(new WindowGame.DisplayComponents());
-        table.repaint();
+        try {
+            table.getColumnModel().getColumn(img.getCurrPosCol()).setCellRenderer(new WindowGame.DisplayComponents());
+            table.repaint();
+        } catch (ArrayIndexOutOfBoundsException e) {
+        }
     }
 
     private boolean isColumnsSame(Image img, Image img2) {
@@ -320,7 +343,7 @@ public class WindowGame extends JFrame {
     }
 
     private void removeLastHeart() {
-        heartsCols.remove(heartsCols.size() - 1);
+        heartsCols.removeLast();
     }
 
     private void fillColorCell(int i) {

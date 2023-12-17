@@ -5,26 +5,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Point {
-    private int countPoints = 0;
-    public int collectedPoints = 0;
+    private int collectedPoints = 0;
+    private int allPoints = 0;
     private ImageIcon imgPoint = new ImageIcon("images/others/point.png");
-    private Map<Integer, ArrayList<Integer>> storedPoints = new HashMap<>();
+    private Map<Integer, ArrayList<Integer>> existingPoints = new HashMap<>();
 
     public void addPoint(int row, int col) {
-        storedPoints.putIfAbsent(row, new ArrayList<>());
-        storedPoints.get(row).add(col);
-        countPoints++;
+        existingPoints.putIfAbsent(row, new ArrayList<>());
+        existingPoints.get(row).add(col);
+        allPoints++;
     }
 
     public void removePoint(int tabRow, int tabCol) {
-        storedPoints.get(tabRow).remove((Integer) tabCol);
-        countPoints--;
+        existingPoints.get(tabRow).remove((Integer) tabCol);
     }
 
     public boolean isPointExistsIn(int tabRow, int tabCol) {
         ArrayList<Integer> colsArr;
         int row;
-        for (Map.Entry<Integer, ArrayList<Integer>> entry : storedPoints.entrySet()) {
+        for (Map.Entry<Integer, ArrayList<Integer>> entry : existingPoints.entrySet()) {
             row = entry.getKey();
             colsArr = entry.getValue();
             for (Integer col : colsArr) {
@@ -43,11 +42,15 @@ public class Point {
         return imgPoint;
     }
 
-    public int getStoredPointsSize() {
-        return storedPoints.size();
+    public int getExistingPointsSize() {
+        return existingPoints.size();
     }
 
     public void addCollectedPoint() {
         collectedPoints++;
+    }
+
+    public int getAllPoints() {
+        return allPoints;
     }
 }
